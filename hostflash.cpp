@@ -286,13 +286,38 @@ static ipmi_ret_t flash_command_create_write_window(ipmi_request_t request,
     return flash_command_create_window(ctx, false, request, response, data_len);
 }
 
+static ipmi_ret_t flash_command_close_window(ipmi_request_t request,
+                                             ipmi_response_t response,
+                                             ipmi_data_len_t data_len,
+                                             ipmi_context_t context)
+{
+    struct hostflash *ctx = static_cast<struct hostflash *>(context);
+
+    if (*data_len < 1)
+    {
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+    }
+
+    uint8_t *reqdata = (uint8_t *)request;
+    auto m = ctx->bus->new_method_call(HIOMAPD_SERVICE, HIOMAPD_OBJECT,
+                                       HIOMAPD_IFACE_V2, "CloseWindow");
+    m.append(get<uint8_t>(&reqdata[0]));
+
+    /* FIXME: Catch SdBusError and return appropriate CC */
+    auto reply = ctx->bus->call(m);
+
+    *data_len = 0;
+
+    return IPMI_CC_OK;
+}
+
 static const flash_command flash_commands[] = {
     [0] = NULL, /* 0 is an invalid command ID */
     [1] = flash_command_reset,
     [2] = flash_command_get_info,
     [3] = flash_command_get_flash_info,
     [4] = flash_command_create_read_window,
-    [5] = NULL, /* CLOSE_WINDOW */
+    [5] = flash_command_close_window,
     [6] = flash_command_create_write_window,
 };
 

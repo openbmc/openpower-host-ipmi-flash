@@ -353,6 +353,35 @@ static ipmi_ret_t flash_command_flush(ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
+static ipmi_ret_t flash_command_ack(ipmi_request_t request,
+                                    ipmi_response_t response,
+                                    ipmi_data_len_t data_len,
+                                    ipmi_context_t context)
+{
+    struct hostflash *ctx = static_cast<struct hostflash *>(context);
+
+    if (*data_len < 1)
+    {
+        return IPMI_CC_REQ_DATA_LEN_INVALID;
+    }
+
+    uint8_t *reqdata = (uint8_t *)request;
+    auto m = ctx->bus->new_method_call(HIOMAPD_SERVICE, HIOMAPD_OBJECT,
+                                       HIOMAPD_IFACE_V2, "Ack");
+    auto acked = reqdata[0];
+    m.append(acked);
+
+    /* FIXME: Catch SdBusError and return appropriate CC */
+    auto reply = ctx->bus->call(m);
+
+    /* Update our cache: Necessary because the signals do not carry a value */
+    ctx->bmc_events &= ~acked;
+
+    *data_len = 0;
+
+    return IPMI_CC_OK;
+}
+
 static const flash_command flash_commands[] = {
     [0] = NULL, /* 0 is an invalid command ID */
     [1] = flash_command_reset,
@@ -363,6 +392,7 @@ static const flash_command flash_commands[] = {
     [6] = flash_command_create_write_window,
     [7] = flash_command_mark_dirty,
     [8] = flash_command_flush,
+    [9] = flash_command_ack,
 };
 
 /* FIXME: Define this in the "right" place, wherever that is */

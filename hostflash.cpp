@@ -382,6 +382,28 @@ static ipmi_ret_t flash_command_ack(ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
+static ipmi_ret_t flash_command_erase(ipmi_request_t request,
+                                      ipmi_response_t response,
+                                      ipmi_data_len_t data_len,
+                                      ipmi_context_t context)
+{
+    struct hostflash *ctx = static_cast<struct hostflash *>(context);
+
+    uint8_t *reqdata = (uint8_t *)request;
+    auto m = ctx->bus->new_method_call(HIOMAPD_SERVICE, HIOMAPD_OBJECT,
+                                       HIOMAPD_IFACE_V2, "Erase");
+    /* FIXME: Assumes v2 */
+    m.append(le16toh(get<uint16_t>(&reqdata[0]))); /* offset */
+    m.append(le16toh(get<uint16_t>(&reqdata[2]))); /* size */
+
+    /* FIXME: Catch SdBusError and return appropriate CC */
+    auto reply = ctx->bus->call(m);
+
+    *data_len = 0;
+
+    return IPMI_CC_OK;
+}
+
 static const flash_command flash_commands[] = {
     [0] = NULL, /* 0 is an invalid command ID */
     [1] = flash_command_reset,
@@ -393,6 +415,7 @@ static const flash_command flash_commands[] = {
     [7] = flash_command_mark_dirty,
     [8] = flash_command_flush,
     [9] = flash_command_ack,
+    [10] = flash_command_erase,
 };
 
 /* FIXME: Define this in the "right" place, wherever that is */

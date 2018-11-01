@@ -1,0 +1,11 @@
+Code-Review+1: Brad Bishop <bradleyb@fuzziesquirrel.com>
+Code-Review+1: Gunnar Mills <gmills@us.ibm.com>
+Code-Review+1: Ed Tanous <ed.tanous@intel.com>
+Code-Review+2: Andrew Jeffery <andrew@aj.id.au>
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Submitted-by: Andrew Jeffery <andrew@aj.id.au>
+Submitted-at: Thu, 01 Nov 2018 00:10:49 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/13596
+Project: openbmc/openpower-host-ipmi-flash
+Branch: refs/heads/master

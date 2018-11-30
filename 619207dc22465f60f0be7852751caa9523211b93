@@ -1,0 +1,10 @@
+Ok-To-Test+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+1: Deepak Kodihalli <dkodihal@in.ibm.com>
+Verified+1: Jenkins <openbmc-ci-admin@ozlabs.org>
+Code-Review+1: Adriana Kobylak <anoo@linux.ibm.com>
+Code-Review+2: Andrew Jeffery <andrew@aj.id.au>
+Submitted-by: Andrew Jeffery <andrew@aj.id.au>
+Submitted-at: Fri, 30 Nov 2018 01:34:54 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/16116
+Project: openbmc/openpower-host-ipmi-flash
+Branch: refs/heads/master

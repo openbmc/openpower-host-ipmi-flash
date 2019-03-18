@@ -400,18 +400,18 @@ static int hiomap_handle_property_update(struct hiomap* ctx,
 
 static int hiomap_protocol_reset_response(IpmiCmdData cmd, bool status)
 {
-    return sd_event_exit(ipmid_get_sd_event_connection(), status ? 0 : EIO);
+    // If this is running in signal context, ipmid will shutdown
+    // the event queue as the last signal handler
+    return 0;
 }
 
-static int hiomap_protocol_reset(sd_event_source* source,
-                                 const struct signalfd_siginfo* si,
-                                 void* userdata)
+static int hiomap_protocol_reset(struct hiomap* ctx)
 {
-    struct hiomap* ctx = static_cast<struct hiomap*>(userdata);
-
     if (ctx->bmc_events == BMC_EVENT_PROTOCOL_RESET)
     {
-        return sd_event_exit(ipmid_get_sd_event_connection(), 0);
+        // If this is running in signal context, ipmid will shutdown
+        // the event queue as the last signal handler
+        return 0;
     }
 
     /*
@@ -863,36 +863,10 @@ static void register_openpower_hiomap_commands()
     ctx->properties =
         new bus::match::match(std::move(hiomap_match_properties(ctx)));
 
-    rc = sigemptyset(sigset);
-    if (rc < 0)
-    {
-        log<level::ERR>("sigemptyset() failed", entry("RC=%d", rc));
-        return;
-    }
-
-    rc = sigaddset(sigset, SIGTERM);
-    if (rc < 0)
-    {
-        log<level::ERR>("sigaddset() failed", entry("RC=%d", rc));
-        return;
-    }
-
-    rc = sigprocmask(SIG_BLOCK, sigset, NULL);
-    if (rc < 0)
-    {
-        log<level::ERR>("sigprocmask() failed", entry("RC=%d", rc));
-        return;
-    }
-
-    events = ipmid_get_sd_event_connection();
-
-    rc = sd_event_add_signal(events, &event_source, SIGTERM,
-                             openpower::flash::hiomap_protocol_reset, ctx);
-    if (rc < 0)
-    {
-        log<level::ERR>("sd_event_add_signal() failed", entry("RC=%d", rc));
-        return;
-    }
+    registerSignalHandler(SIGTERM,
+                          [ctx](const boost::system::error_code& ec, int sig) {
+                              openpower::flash::hiomap_protocol_reset(ctx);
+                          });
 
     ipmi_register_callback(NETFUN_IBM_OEM, IPMI_CMD_HIOMAP, ctx,
                            openpower::flash::hiomap_dispatch, SYSTEM_INTERFACE);

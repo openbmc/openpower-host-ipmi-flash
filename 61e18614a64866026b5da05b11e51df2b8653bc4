@@ -1,0 +1,10 @@
+Ok-To-Test+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+1: Deepak Kodihalli <deepak.kodihalli.83@gmail.com>
+Code-Review+1: Adriana Kobylak <anoo@linux.ibm.com>
+Code-Review+2: Andrew Jeffery <andrew@aj.id.au>
+Submitted-by: Andrew Jeffery <andrew@aj.id.au>
+Submitted-at: Tue, 27 Apr 2021 23:44:29 +0000
+Reviewed-on: https://gerrit.openbmc-project.xyz/c/openbmc/openpower-host-ipmi-flash/+/42167
+Project: openbmc/openpower-host-ipmi-flash
+Branch: refs/heads/master

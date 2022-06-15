@@ -6,7 +6,7 @@
 #include "hiomap.hpp"
 
 #include <endian.h>
-#include <host-ipmid/ipmid-api.h>
+#include <ipmid/api.h>
 #include <signal.h>
 #include <string.h>
 #include <systemd/sd-bus.h>

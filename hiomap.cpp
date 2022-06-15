@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (C) 2018 IBM Corp.
 
-#include "config.h"
-
 #include "hiomap.hpp"
 
 #include <endian.h>
-#include <host-ipmid/ipmid-api.h>
+#include <ipmid/api.h>
 #include <signal.h>
 #include <string.h>
 #include <systemd/sd-bus.h>
@@ -16,9 +14,9 @@
 #include <cstring>
 #include <fstream>
 #include <functional>
-#include <host-ipmid/ipmid-host-cmd-utils.hpp>
-#include <host-ipmid/ipmid-host-cmd.hpp>
 #include <iostream>
+#include <ipmid-host/cmd-utils.hpp>
+#include <ipmid-host/cmd.hpp>
 #include <ipmid/api.hpp>
 #include <map>
 #include <phosphor-logging/log.hpp>
@@ -27,6 +25,7 @@
 #include <sdbusplus/exception.hpp>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 #include <utility>
 
 /*
@@ -283,10 +282,9 @@ static inline void put(void* buf, T&& t)
     std::memcpy(buf, &t, sizeof(t));
 }
 
-typedef ipmi_ret_t (*hiomap_command)(ipmi_request_t req, ipmi_response_t resp,
-                                     ipmi_data_len_t data_len,
-                                     ipmi_context_t context);
-
+using hiomap_command =
+    std::function<ipmi_ret_t(ipmi_request_t req, ipmi_response_t resp,
+                             ipmi_data_len_t data_len, ipmi_context_t context)>;
 struct errno_cc_entry
 {
     int err;
@@ -383,7 +381,7 @@ static int hiomap_handle_property_update(struct hiomap* ctx,
     return 0;
 }
 
-static int hiomap_protocol_reset_response(IpmiCmdData cmd, bool status)
+static int hiomap_protocol_reset_response(IpmiCmdData /*cmd*/, bool /*status*/)
 {
     // If this is running in signal context, ipmid will shutdown
     // the event queue as the last signal handler
@@ -432,7 +430,7 @@ static bus::match::match hiomap_match_properties(struct hiomap* ctx)
     return match;
 }
 
-static ipmi_ret_t hiomap_reset(ipmi_request_t request, ipmi_response_t response,
+static ipmi_ret_t hiomap_reset(ipmi_request_t, ipmi_response_t,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
@@ -496,7 +494,7 @@ static ipmi_ret_t hiomap_get_info(ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_get_flash_info(ipmi_request_t request,
+static ipmi_ret_t hiomap_get_flash_info(ipmi_request_t,
                                         ipmi_response_t response,
                                         ipmi_data_len_t data_len,
                                         ipmi_context_t context)
@@ -588,8 +586,7 @@ static ipmi_ret_t hiomap_create_write_window(ipmi_request_t request,
     return hiomap_create_window(ctx, false, request, response, data_len);
 }
 
-static ipmi_ret_t hiomap_close_window(ipmi_request_t request,
-                                      ipmi_response_t response,
+static ipmi_ret_t hiomap_close_window(ipmi_request_t request, ipmi_response_t,
                                       ipmi_data_len_t data_len,
                                       ipmi_context_t context)
 {
@@ -619,8 +616,7 @@ static ipmi_ret_t hiomap_close_window(ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_mark_dirty(ipmi_request_t request,
-                                    ipmi_response_t response,
+static ipmi_ret_t hiomap_mark_dirty(ipmi_request_t request, ipmi_response_t,
                                     ipmi_data_len_t data_len,
                                     ipmi_context_t context)
 {
@@ -652,7 +648,7 @@ static ipmi_ret_t hiomap_mark_dirty(ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_flush(ipmi_request_t request, ipmi_response_t response,
+static ipmi_ret_t hiomap_flush(ipmi_request_t, ipmi_response_t,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
@@ -675,7 +671,7 @@ static ipmi_ret_t hiomap_flush(ipmi_request_t request, ipmi_response_t response,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_ack(ipmi_request_t request, ipmi_response_t response,
+static ipmi_ret_t hiomap_ack(ipmi_request_t request, ipmi_response_t,
                              ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
@@ -705,7 +701,7 @@ static ipmi_ret_t hiomap_ack(ipmi_request_t request, ipmi_response_t response,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_erase(ipmi_request_t request, ipmi_response_t response,
+static ipmi_ret_t hiomap_erase(ipmi_request_t request, ipmi_response_t,
                                ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
@@ -747,25 +743,25 @@ static ipmi_ret_t hiomap_erase(ipmi_request_t request, ipmi_response_t response,
 #define HIOMAP_C_ACK 9
 #define HIOMAP_C_ERASE 10
 
-static const hiomap_command hiomap_commands[] = {
-    [0] = NULL, /* Invalid command ID */
-    [HIOMAP_C_RESET] = hiomap_reset,
-    [HIOMAP_C_GET_INFO] = hiomap_get_info,
-    [HIOMAP_C_GET_FLASH_INFO] = hiomap_get_flash_info,
-    [HIOMAP_C_CREATE_READ_WINDOW] = hiomap_create_read_window,
-    [HIOMAP_C_CLOSE_WINDOW] = hiomap_close_window,
-    [HIOMAP_C_CREATE_WRITE_WINDOW] = hiomap_create_write_window,
-    [HIOMAP_C_MARK_DIRTY] = hiomap_mark_dirty,
-    [HIOMAP_C_FLUSH] = hiomap_flush,
-    [HIOMAP_C_ACK] = hiomap_ack,
-    [HIOMAP_C_ERASE] = hiomap_erase,
+static const std::unordered_map<uint8_t, hiomap_command> hiomap_commands = {
+    {0, nullptr}, /* Invalid command ID */
+    {HIOMAP_C_RESET, hiomap_reset},
+    {HIOMAP_C_GET_INFO, hiomap_get_info},
+    {HIOMAP_C_GET_FLASH_INFO, hiomap_get_flash_info},
+    {HIOMAP_C_CREATE_READ_WINDOW, hiomap_create_read_window},
+    {HIOMAP_C_CLOSE_WINDOW, hiomap_close_window},
+    {HIOMAP_C_CREATE_WRITE_WINDOW, hiomap_create_write_window},
+    {HIOMAP_C_MARK_DIRTY, hiomap_mark_dirty},
+    {HIOMAP_C_FLUSH, hiomap_flush},
+    {HIOMAP_C_ACK, hiomap_ack},
+    {HIOMAP_C_ERASE, hiomap_erase},
 };
 
 /* FIXME: Define this in the "right" place, wherever that is */
 /* FIXME: Double evaluation */
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
-static ipmi_ret_t hiomap_dispatch(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
+static ipmi_ret_t hiomap_dispatch(ipmi_netfn_t, ipmi_cmd_t,
                                   ipmi_request_t request,
                                   ipmi_response_t response,
                                   ipmi_data_len_t data_len,
@@ -783,7 +779,7 @@ static ipmi_ret_t hiomap_dispatch(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     uint8_t* ipmi_resp = (uint8_t*)response;
     uint8_t hiomap_cmd = ipmi_req[0];
 
-    if (hiomap_cmd == 0 || hiomap_cmd > ARRAY_SIZE(hiomap_commands) - 1)
+    if (hiomap_cmd == 0 || hiomap_cmd > hiomap_commands.size() - 1)
     {
         *data_len = 0;
         return IPMI_CC_PARM_OUT_OF_RANGE;
@@ -804,8 +800,13 @@ static ipmi_ret_t hiomap_dispatch(ipmi_netfn_t netfn, ipmi_cmd_t cmd,
     size_t flash_len = *data_len - 2;
     uint8_t* flash_resp = ipmi_resp + 2;
 
-    ipmi_ret_t cc =
-        hiomap_commands[hiomap_cmd](flash_req, flash_resp, &flash_len, context);
+    auto cmd = hiomap_commands.find(hiomap_cmd);
+    if (cmd == hiomap_commands.end())
+    {
+        *data_len = 0;
+        return IPMI_CC_INVALID;
+    }
+    ipmi_ret_t cc = cmd->second(flash_req, flash_resp, &flash_len, context);
     if (cc != IPMI_CC_OK)
     {
         *data_len = 0;
@@ -848,7 +849,7 @@ static void register_openpower_hiomap_commands()
         new bus::match::match(std::move(hiomap_match_properties(ctx)));
 
     std::function<SignalResponse(int)> shutdownHandler =
-        [ctx](int signalNumber) {
+        [ctx](int /*signalNumber*/) {
             hiomap_protocol_reset(ctx);
             return sigtermResponse;
         };

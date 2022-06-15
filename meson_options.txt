@@ -1,0 +1,6 @@
+option('tests', type: 'feature', description: 'Build tests')
+option(
+  'hiomapd-obj-path',
+  type: 'string',
+  value: '/xyz/openbmc_project/hiomapd',
+  description: 'The Control Host D-Bus Object Manager')

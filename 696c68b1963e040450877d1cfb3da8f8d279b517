@@ -39,6 +39,30 @@
       },
       "revId": "696c68b1963e040450877d1cfb3da8f8d279b517",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5f4323fb_461dff0b",
+        "filename": "hiomap.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 1000885
+      },
+      "writtenOn": "2022-06-17T04:22:17Z",
+      "side": 1,
+      "message": "yeah, its supported.\n\nUpdated.",
+      "parentUuid": "d4f240e8_6eb05328",
+      "range": {
+        "startLine": 384,
+        "startChar": 42,
+        "endLine": 384,
+        "endChar": 61
+      },
+      "revId": "696c68b1963e040450877d1cfb3da8f8d279b517",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

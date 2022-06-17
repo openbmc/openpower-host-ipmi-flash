@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "383ee18a_a8a09bff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2022-06-17T01:44:40Z",
+      "side": 1,
+      "message": "Thanks for the meson conversion!",
+      "revId": "696c68b1963e040450877d1cfb3da8f8d279b517",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4f240e8_6eb05328",
+        "filename": "hiomap.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2022-06-17T01:44:40Z",
+      "side": 1,
+      "message": "Bit of a nit, but I\u0027d prefer we go with [[maybe_unused]] instead (if it\u0027s supported in in whatever C++ spec we\u0027re using here?). And if that works, for the rest of the cases as well.",
+      "range": {
+        "startLine": 384,
+        "startChar": 42,
+        "endLine": 384,
+        "endChar": 61
+      },
+      "revId": "696c68b1963e040450877d1cfb3da8f8d279b517",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

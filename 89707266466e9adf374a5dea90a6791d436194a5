@@ -1,0 +1,7 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+2: Andrew Jeffery <andrew@aj.id.au>
+Submitted-by: Andrew Jeffery <andrew@aj.id.au>
+Submitted-at: Tue, 21 Jun 2022 06:29:23 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/openpower-host-ipmi-flash/+/54613
+Project: openbmc/openpower-host-ipmi-flash
+Branch: refs/heads/master

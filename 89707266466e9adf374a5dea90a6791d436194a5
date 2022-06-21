@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2b6fe381_c6d79b7a",
+        "filename": "meson.build",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1000188
+      },
+      "writtenOn": "2022-06-21T23:29:44Z",
+      "side": 1,
+      "message": "This is not ever used as a static library, it should be a `shared_module` but it could be a shared_library if the extra symlinks are really useful for something.",
+      "revId": "89707266466e9adf374a5dea90a6791d436194a5",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

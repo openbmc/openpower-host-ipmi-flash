@@ -254,10 +254,10 @@ static int active_event_updates;
 
 struct hiomap
 {
-    bus::bus* bus;
+    bus_t* bus;
 
     /* Signals */
-    bus::match::match* properties;
+    bus::match_t* properties;
 
     /* Protocol state */
     std::map<std::string, int> event_lookup;
@@ -336,7 +336,7 @@ static void ipmi_hiomap_event_response(IpmiCmdData cmd, bool status)
 }
 
 static int hiomap_handle_property_update(struct hiomap* ctx,
-                                         sdbusplus::message::message& msg)
+                                         sdbusplus::message_t& msg)
 {
     using namespace phosphor::logging;
 
@@ -419,12 +419,12 @@ static int hiomap_protocol_reset(struct hiomap* ctx)
     return 0;
 }
 
-static bus::match::match hiomap_match_properties(struct hiomap* ctx)
+static bus::match_t hiomap_match_properties(struct hiomap* ctx)
 {
     auto properties =
         bus::match::rules::propertiesChanged(HIOMAPD_OBJECT, HIOMAPD_IFACE_V2);
 
-    bus::match::match match(
+    bus::match_t match(
         *ctx->bus, properties,
         std::bind(hiomap_handle_property_update, ctx, std::placeholders::_1));
 
@@ -445,7 +445,7 @@ static ipmi_ret_t hiomap_reset([[maybe_unused]] ipmi_request_t request,
 
         *data_len = 0;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -488,7 +488,7 @@ static ipmi_ret_t hiomap_get_info(ipmi_request_t request,
 
         *data_len = 4;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -518,7 +518,7 @@ static ipmi_ret_t hiomap_get_flash_info([[maybe_unused]] ipmi_request_t request,
 
         *data_len = 4;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -560,7 +560,7 @@ static ipmi_ret_t hiomap_create_window(struct hiomap* ctx, bool ro,
 
         *data_len = 6;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -611,7 +611,7 @@ static ipmi_ret_t hiomap_close_window(ipmi_request_t request,
 
         *data_len = 0;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -644,7 +644,7 @@ static ipmi_ret_t hiomap_mark_dirty(ipmi_request_t request,
 
         *data_len = 0;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -668,7 +668,7 @@ static ipmi_ret_t hiomap_flush([[maybe_unused]] ipmi_request_t request,
 
         *data_len = 0;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -699,7 +699,7 @@ static ipmi_ret_t hiomap_ack(ipmi_request_t request,
 
         *data_len = 0;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -731,7 +731,7 @@ static ipmi_ret_t hiomap_erase(ipmi_request_t request,
 
         *data_len = 0;
     }
-    catch (const exception::exception& e)
+    catch (const exception_t& e)
     {
         return hiomap_xlate_errno(e.get_errno());
     }
@@ -845,7 +845,7 @@ static void register_openpower_hiomap_commands()
     ctx->event_lookup["WindowReset"] = BMC_EVENT_WINDOW_RESET;
     ctx->event_lookup["ProtocolReset"] = BMC_EVENT_PROTOCOL_RESET;
 
-    ctx->bus = new bus::bus(ipmid_get_sd_bus_connection());
+    ctx->bus = new bus_t(ipmid_get_sd_bus_connection());
 
     /* Initialise signal handling */
 
@@ -853,8 +853,7 @@ static void register_openpower_hiomap_commands()
      * Can't use temporaries here because that causes SEGFAULTs due to slot
      * destruction (!?), so enjoy the weird wrapping.
      */
-    ctx->properties =
-        new bus::match::match(std::move(hiomap_match_properties(ctx)));
+    ctx->properties = new bus::match_t(std::move(hiomap_match_properties(ctx)));
 
     std::function<SignalResponse(int)> shutdownHandler =
         [ctx]([[maybe_unused]] int signalNumber) {

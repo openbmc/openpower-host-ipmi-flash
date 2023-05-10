@@ -10,19 +10,20 @@
 #include <systemd/sd-bus.h>
 #include <systemd/sd-event.h>
 
+#include <ipmid-host/cmd-utils.hpp>
+#include <ipmid-host/cmd.hpp>
+#include <ipmid/api.hpp>
+#include <phosphor-logging/log.hpp>
+#include <sdbusplus/bus.hpp>
+#include <sdbusplus/bus/match.hpp>
+#include <sdbusplus/exception.hpp>
+
 #include <cassert>
 #include <cstring>
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include <ipmid-host/cmd-utils.hpp>
-#include <ipmid-host/cmd.hpp>
-#include <ipmid/api.hpp>
 #include <map>
-#include <phosphor-logging/log.hpp>
-#include <sdbusplus/bus.hpp>
-#include <sdbusplus/bus/match.hpp>
-#include <sdbusplus/exception.hpp>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -353,7 +354,7 @@ static int hiomap_handle_property_update(struct hiomap* ctx,
     std::string iface;
     msg.read(iface, msgData);
 
-    for (auto const& x : msgData)
+    for (const auto& x : msgData)
     {
         if (!ctx->event_lookup.count(x.first))
         {
@@ -421,8 +422,8 @@ static int hiomap_protocol_reset(struct hiomap* ctx)
 
 static bus::match_t hiomap_match_properties(struct hiomap* ctx)
 {
-    auto properties =
-        bus::match::rules::propertiesChanged(HIOMAPD_OBJECT, HIOMAPD_IFACE_V2);
+    auto properties = bus::match::rules::propertiesChanged(HIOMAPD_OBJECT,
+                                                           HIOMAPD_IFACE_V2);
 
     bus::match_t match(
         *ctx->bus, properties,
@@ -793,9 +794,9 @@ static ipmi_ret_t hiomap_dispatch([[maybe_unused]] ipmi_netfn_t netfn,
         return IPMI_CC_PARM_OUT_OF_RANGE;
     }
 
-    bool is_unversioned =
-        (hiomap_cmd == HIOMAP_C_RESET || hiomap_cmd == HIOMAP_C_GET_INFO ||
-         hiomap_cmd == HIOMAP_C_ACK);
+    bool is_unversioned = (hiomap_cmd == HIOMAP_C_RESET ||
+                           hiomap_cmd == HIOMAP_C_GET_INFO ||
+                           hiomap_cmd == HIOMAP_C_ACK);
     if (!is_unversioned && ctx->seq == ipmi_req[1])
     {
         *data_len = 0;
@@ -857,9 +858,9 @@ static void register_openpower_hiomap_commands()
 
     std::function<SignalResponse(int)> shutdownHandler =
         [ctx]([[maybe_unused]] int signalNumber) {
-            hiomap_protocol_reset(ctx);
-            return sigtermResponse;
-        };
+        hiomap_protocol_reset(ctx);
+        return sigtermResponse;
+    };
     registerSignalHandler(ipmi::prioMax, SIGTERM, shutdownHandler);
 
     ipmi_register_callback(NETFUN_IBM_OEM, IPMI_CMD_HIOMAP, ctx,

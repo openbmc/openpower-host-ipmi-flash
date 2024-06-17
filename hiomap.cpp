@@ -77,7 +77,7 @@ somewhat tricky:
 Point 3. suggests mboxd should have a Wants=/Before= relationship with ipmid to
 ensure ipmid can call into mboxd as messages arrive. However, this causes some
 grief with shutdown of the BMC, as mboxd needs to issue a state-change
-notification when it is shut down to inform the host that will not repsond to
+notification when it is shut down to inform the host that will not respond to
 future requests and that the protocol state has been reset. If mboxd has a
 Wants=/Before= relationship with ipmid this message will never propagate to the
 host, as ipmid will be shut by systemd before mboxd.
@@ -176,9 +176,9 @@ This leads to a third necessary observation:
 
 The fact that sd_event is used to pump DBus events means that ipmid can remain
 a single-threaded process. By remaining single-threaded we know that events
-processing is sequencial and no two events can be processed simultaneously. A
+processing is sequential and no two events can be processed simultaneously. A
 corollary of this is that DBus events and UNIX signals are serialised with
-respect to eachother.
+respect to each other.
 
 The fourth necessary observation is that we do not need to pump sd_event in
 order to complete DBus method calls; sd_bus will handle the pumping independent

@@ -422,8 +422,8 @@ static int hiomap_protocol_reset(struct hiomap* ctx)
 
 static bus::match_t hiomap_match_properties(struct hiomap* ctx)
 {
-    auto properties = bus::match::rules::propertiesChanged(HIOMAPD_OBJECT,
-                                                           HIOMAPD_IFACE_V2);
+    auto properties =
+        bus::match::rules::propertiesChanged(HIOMAPD_OBJECT, HIOMAPD_IFACE_V2);
 
     bus::match_t match(
         *ctx->bus, properties,
@@ -454,10 +454,9 @@ static ipmi_ret_t hiomap_reset([[maybe_unused]] ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_get_info(ipmi_request_t request,
-                                  ipmi_response_t response,
-                                  ipmi_data_len_t data_len,
-                                  ipmi_context_t context)
+static ipmi_ret_t
+    hiomap_get_info(ipmi_request_t request, ipmi_response_t response,
+                    ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
@@ -497,10 +496,9 @@ static ipmi_ret_t hiomap_get_info(ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_get_flash_info([[maybe_unused]] ipmi_request_t request,
-                                        ipmi_response_t response,
-                                        ipmi_data_len_t data_len,
-                                        ipmi_context_t context)
+static ipmi_ret_t hiomap_get_flash_info(
+    [[maybe_unused]] ipmi_request_t request, ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
@@ -527,10 +525,9 @@ static ipmi_ret_t hiomap_get_flash_info([[maybe_unused]] ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_create_window(struct hiomap* ctx, bool ro,
-                                       ipmi_request_t request,
-                                       ipmi_response_t response,
-                                       ipmi_data_len_t data_len)
+static ipmi_ret_t
+    hiomap_create_window(struct hiomap* ctx, bool ro, ipmi_request_t request,
+                         ipmi_response_t response, ipmi_data_len_t data_len)
 {
     if (*data_len < 4)
     {
@@ -569,30 +566,27 @@ static ipmi_ret_t hiomap_create_window(struct hiomap* ctx, bool ro,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_create_read_window(ipmi_request_t request,
-                                            ipmi_response_t response,
-                                            ipmi_data_len_t data_len,
-                                            ipmi_context_t context)
+static ipmi_ret_t
+    hiomap_create_read_window(ipmi_request_t request, ipmi_response_t response,
+                              ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
     return hiomap_create_window(ctx, true, request, response, data_len);
 }
 
-static ipmi_ret_t hiomap_create_write_window(ipmi_request_t request,
-                                             ipmi_response_t response,
-                                             ipmi_data_len_t data_len,
-                                             ipmi_context_t context)
+static ipmi_ret_t
+    hiomap_create_write_window(ipmi_request_t request, ipmi_response_t response,
+                               ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
     return hiomap_create_window(ctx, false, request, response, data_len);
 }
 
-static ipmi_ret_t hiomap_close_window(ipmi_request_t request,
-                                      [[maybe_unused]] ipmi_response_t response,
-                                      ipmi_data_len_t data_len,
-                                      ipmi_context_t context)
+static ipmi_ret_t hiomap_close_window(
+    ipmi_request_t request, [[maybe_unused]] ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
@@ -620,10 +614,9 @@ static ipmi_ret_t hiomap_close_window(ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t hiomap_mark_dirty(ipmi_request_t request,
-                                    [[maybe_unused]] ipmi_response_t response,
-                                    ipmi_data_len_t data_len,
-                                    ipmi_context_t context)
+static ipmi_ret_t hiomap_mark_dirty(
+    ipmi_request_t request, [[maybe_unused]] ipmi_response_t response,
+    ipmi_data_len_t data_len, ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
@@ -769,12 +762,10 @@ static const std::unordered_map<uint8_t, hiomap_command> hiomap_commands = {
 /* FIXME: Double evaluation */
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
-static ipmi_ret_t hiomap_dispatch([[maybe_unused]] ipmi_netfn_t netfn,
-                                  [[maybe_unused]] ipmi_cmd_t cmd,
-                                  ipmi_request_t request,
-                                  ipmi_response_t response,
-                                  ipmi_data_len_t data_len,
-                                  ipmi_context_t context)
+static ipmi_ret_t hiomap_dispatch(
+    [[maybe_unused]] ipmi_netfn_t netfn, [[maybe_unused]] ipmi_cmd_t cmd,
+    ipmi_request_t request, ipmi_response_t response, ipmi_data_len_t data_len,
+    ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
@@ -794,9 +785,9 @@ static ipmi_ret_t hiomap_dispatch([[maybe_unused]] ipmi_netfn_t netfn,
         return IPMI_CC_PARM_OUT_OF_RANGE;
     }
 
-    bool is_unversioned = (hiomap_cmd == HIOMAP_C_RESET ||
-                           hiomap_cmd == HIOMAP_C_GET_INFO ||
-                           hiomap_cmd == HIOMAP_C_ACK);
+    bool is_unversioned =
+        (hiomap_cmd == HIOMAP_C_RESET || hiomap_cmd == HIOMAP_C_GET_INFO ||
+         hiomap_cmd == HIOMAP_C_ACK);
     if (!is_unversioned && ctx->seq == ipmi_req[1])
     {
         *data_len = 0;
@@ -858,9 +849,9 @@ static void register_openpower_hiomap_commands()
 
     std::function<SignalResponse(int)> shutdownHandler =
         [ctx]([[maybe_unused]] int signalNumber) {
-        hiomap_protocol_reset(ctx);
-        return sigtermResponse;
-    };
+            hiomap_protocol_reset(ctx);
+            return sigtermResponse;
+        };
     registerSignalHandler(ipmi::prioMax, SIGTERM, shutdownHandler);
 
     ipmi_register_callback(NETFUN_IBM_OEM, IPMI_CMD_HIOMAP, ctx,

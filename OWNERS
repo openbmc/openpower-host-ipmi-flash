@@ -32,10 +32,9 @@
 # data within them will be kept sorted.
 
 owners:
-- andrew@codeconstruct.com.au
+- anoo@us.ibm.com
 
 reviewers:
-- anoo@us.ibm.com
 - deepak.kodihalli.83@gmail.com
 
 matchers:
@@ -44,9 +43,6 @@ openbmc:
 - name: Adriana Kobylak
   email: anoo@us.ibm.com
   discord: anoo
-- name: Andrew Jeffery
-  email: andrew@codeconstruct.com.au
-  discord: arj
 - name: Deepak Kodihalli
   email: deepak.kodihalli.83@gmail.com
   discord: dkodihal

@@ -1,0 +1,7 @@
+Verified+1: OpenBMC CI <openbmcbump-ci@yahoo.com>
+Code-Review+2: Adriana Kobylak <anoo@us.ibm.com>
+Submitted-by: Adriana Kobylak <anoo@us.ibm.com>
+Submitted-at: Tue, 03 Sep 2024 20:52:13 +0000
+Reviewed-on: https://gerrit.openbmc.org/c/openbmc/openpower-host-ipmi-flash/+/74254
+Project: openbmc/openpower-host-ipmi-flash
+Branch: refs/heads/master

@@ -12,7 +12,7 @@ project(
 
 # Dependencies
 phosphor_logging_dep = dependency('phosphor-logging')
-systemd = dependency('systemd')
+libsystemd = dependency('libsystemd')
 sdbusplus_dep = dependency('sdbusplus', required : false, include_type: 'system')
 ipmid_dep = dependency('libipmid')
 
@@ -30,7 +30,7 @@ hiomapdir_pre = declare_dependency(
   include_directories: root_inc,
   dependencies: [
     phosphor_logging_dep,
-    systemd,
+    libsystemd,
     sdbusplus_dep,
     ipmid_dep,
   ])

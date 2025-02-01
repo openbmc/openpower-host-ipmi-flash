@@ -454,9 +454,9 @@ static ipmi_ret_t hiomap_reset([[maybe_unused]] ipmi_request_t request,
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t
-    hiomap_get_info(ipmi_request_t request, ipmi_response_t response,
-                    ipmi_data_len_t data_len, ipmi_context_t context)
+static ipmi_ret_t hiomap_get_info(
+    ipmi_request_t request, ipmi_response_t response, ipmi_data_len_t data_len,
+    ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
@@ -525,9 +525,9 @@ static ipmi_ret_t hiomap_get_flash_info(
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t
-    hiomap_create_window(struct hiomap* ctx, bool ro, ipmi_request_t request,
-                         ipmi_response_t response, ipmi_data_len_t data_len)
+static ipmi_ret_t hiomap_create_window(
+    struct hiomap* ctx, bool ro, ipmi_request_t request,
+    ipmi_response_t response, ipmi_data_len_t data_len)
 {
     if (*data_len < 4)
     {
@@ -566,18 +566,18 @@ static ipmi_ret_t
     return IPMI_CC_OK;
 }
 
-static ipmi_ret_t
-    hiomap_create_read_window(ipmi_request_t request, ipmi_response_t response,
-                              ipmi_data_len_t data_len, ipmi_context_t context)
+static ipmi_ret_t hiomap_create_read_window(
+    ipmi_request_t request, ipmi_response_t response, ipmi_data_len_t data_len,
+    ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 
     return hiomap_create_window(ctx, true, request, response, data_len);
 }
 
-static ipmi_ret_t
-    hiomap_create_write_window(ipmi_request_t request, ipmi_response_t response,
-                               ipmi_data_len_t data_len, ipmi_context_t context)
+static ipmi_ret_t hiomap_create_write_window(
+    ipmi_request_t request, ipmi_response_t response, ipmi_data_len_t data_len,
+    ipmi_context_t context)
 {
     struct hiomap* ctx = static_cast<struct hiomap*>(context);
 

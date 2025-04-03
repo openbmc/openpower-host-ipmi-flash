@@ -854,6 +854,6 @@ static void register_openpower_hiomap_commands()
         };
     registerSignalHandler(ipmi::prioMax, SIGTERM, shutdownHandler);
 
-    ipmi_register_callback(NETFUN_IBM_OEM, IPMI_CMD_HIOMAP, ctx,
+    ipmi_register_callback(ipmi::netFnOemSix, IPMI_CMD_HIOMAP, ctx,
                            openpower::flash::hiomap_dispatch, SYSTEM_INTERFACE);
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6138c48_dc2c1887",
+        "filename": "hiomap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000003
+      },
+      "writtenOn": "2025-04-09T14:45:14Z",
+      "side": 1,
+      "message": "We should update this include too to be `ipmid/api.hpp`?",
+      "revId": "d9a88a578ed83deeb34169cdda95d74f1e8a4b6d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    }
+  ]
+}

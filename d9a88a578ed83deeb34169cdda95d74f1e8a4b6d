@@ -16,6 +16,24 @@
       "message": "We should update this include too to be `ipmid/api.hpp`?",
       "revId": "d9a88a578ed83deeb34169cdda95d74f1e8a4b6d",
       "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6025027b_8cd81865",
+        "filename": "hiomap.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1000397
+      },
+      "writtenOn": "2025-04-10T00:38:53Z",
+      "side": 1,
+      "message": "L:15 already include api.hpp. But we can\u0027t remove api.h yet, because L:287 is still using it.",
+      "parentUuid": "e6138c48_dc2c1887",
+      "revId": "d9a88a578ed83deeb34169cdda95d74f1e8a4b6d",
+      "serverId": "adbd0a64-1f21-4d83-b585-671fe73cb6e4"
     }
   ]
 }

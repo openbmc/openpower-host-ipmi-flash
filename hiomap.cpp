@@ -293,16 +293,16 @@ struct errno_cc_entry
 };
 
 static const errno_cc_entry errno_cc_map[] = {
-    {0, IPMI_CC_OK},
-    {EBUSY, IPMI_CC_BUSY},
-    {ENOTSUP, IPMI_CC_INVALID},
-    {ETIMEDOUT, 0xc3}, /* FIXME: Replace when defined in ipmid-api.h */
-    {ENOSPC, 0xc4},    /* FIXME: Replace when defined in ipmid-api.h */
-    {EINVAL, IPMI_CC_PARM_OUT_OF_RANGE},
-    {ENODEV, IPMI_CC_SENSOR_INVALID},
-    {EPERM, IPMI_CC_INSUFFICIENT_PRIVILEGE},
-    {EACCES, IPMI_CC_INSUFFICIENT_PRIVILEGE},
-    {-1, IPMI_CC_UNSPECIFIED_ERROR},
+    {0, ipmi::ccSuccess},
+    {EBUSY, ipmi::ccBusy},
+    {ENOTSUP, ipmi::ccInvalidCommand},
+    {ETIMEDOUT, ipmi::ccTimeout},
+    {ENOSPC, ipmi::ccOutOfSpace},
+    {EINVAL, ipmi::ccParmOutOfRange},
+    {ENODEV, ipmi::ccSensorInvalid},
+    {EPERM, ipmi::ccInsufficientPrivilege},
+    {EACCES, ipmi::ccInsufficientPrivilege},
+    {-1, ipmi::ccUnspecifiedError},
 };
 
 static int hiomap_xlate_errno(int err)
@@ -451,7 +451,7 @@ static ipmi_ret_t hiomap_reset([[maybe_unused]] ipmi_request_t request,
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t hiomap_get_info(
@@ -462,7 +462,7 @@ static ipmi_ret_t hiomap_get_info(
 
     if (*data_len < 1)
     {
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     uint8_t* reqdata = (uint8_t*)request;
@@ -493,7 +493,7 @@ static ipmi_ret_t hiomap_get_info(
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t hiomap_get_flash_info(
@@ -522,7 +522,7 @@ static ipmi_ret_t hiomap_get_flash_info(
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t hiomap_create_window(
@@ -531,7 +531,7 @@ static ipmi_ret_t hiomap_create_window(
 {
     if (*data_len < 4)
     {
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     uint8_t* reqdata = (uint8_t*)request;
@@ -563,7 +563,7 @@ static ipmi_ret_t hiomap_create_window(
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t hiomap_create_read_window(
@@ -592,7 +592,7 @@ static ipmi_ret_t hiomap_close_window(
 
     if (*data_len < 1)
     {
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     uint8_t* reqdata = (uint8_t*)request;
@@ -611,7 +611,7 @@ static ipmi_ret_t hiomap_close_window(
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t hiomap_mark_dirty(
@@ -622,7 +622,7 @@ static ipmi_ret_t hiomap_mark_dirty(
 
     if (*data_len < 4)
     {
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     uint8_t* reqdata = (uint8_t*)request;
@@ -643,7 +643,7 @@ static ipmi_ret_t hiomap_mark_dirty(
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t hiomap_flush([[maybe_unused]] ipmi_request_t request,
@@ -667,7 +667,7 @@ static ipmi_ret_t hiomap_flush([[maybe_unused]] ipmi_request_t request,
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t hiomap_ack(ipmi_request_t request,
@@ -678,7 +678,7 @@ static ipmi_ret_t hiomap_ack(ipmi_request_t request,
 
     if (*data_len < 1)
     {
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     uint8_t* reqdata = (uint8_t*)request;
@@ -698,7 +698,7 @@ static ipmi_ret_t hiomap_ack(ipmi_request_t request,
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 static ipmi_ret_t hiomap_erase(ipmi_request_t request,
@@ -709,7 +709,7 @@ static ipmi_ret_t hiomap_erase(ipmi_request_t request,
 
     if (*data_len < 4)
     {
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     uint8_t* reqdata = (uint8_t*)request;
@@ -730,7 +730,7 @@ static ipmi_ret_t hiomap_erase(ipmi_request_t request,
         return hiomap_xlate_errno(e.get_errno());
     }
 
-    return IPMI_CC_OK;
+    return ipmi::ccSuccess;
 }
 
 #define HIOMAP_C_RESET 1
@@ -772,7 +772,7 @@ static ipmi_ret_t hiomap_dispatch(
     if (*data_len < 2)
     {
         *data_len = 0;
-        return IPMI_CC_REQ_DATA_LEN_INVALID;
+        return ipmi::ccReqDataLenInvalid;
     }
 
     uint8_t* ipmi_req = (uint8_t*)request;
@@ -782,7 +782,7 @@ static ipmi_ret_t hiomap_dispatch(
     if (hiomap_cmd == 0 || hiomap_cmd > hiomap_commands.size() - 1)
     {
         *data_len = 0;
-        return IPMI_CC_PARM_OUT_OF_RANGE;
+        return ipmi::ccParmOutOfRange;
     }
 
     bool is_unversioned =
@@ -791,7 +791,7 @@ static ipmi_ret_t hiomap_dispatch(
     if (!is_unversioned && ctx->seq == ipmi_req[1])
     {
         *data_len = 0;
-        return IPMI_CC_INVALID_FIELD_REQUEST;
+        return ipmi::ccInvalidCommand;
     }
 
     ctx->seq = ipmi_req[1];
@@ -804,10 +804,10 @@ static ipmi_ret_t hiomap_dispatch(
     if (command == hiomap_commands.end())
     {
         *data_len = 0;
-        return IPMI_CC_INVALID;
+        return ipmi::ccInvalidCommand;
     }
     ipmi_ret_t cc = command->second(flash_req, flash_resp, &flash_len, context);
-    if (cc != IPMI_CC_OK)
+    if (cc != ipmi::ccSuccess)
     {
         *data_len = 0;
         return cc;

@@ -14,7 +14,7 @@ project(
 # Dependencies
 phosphor_logging_dep = dependency('phosphor-logging')
 libsystemd = dependency('libsystemd')
-sdbusplus_dep = dependency('sdbusplus', required: false, include_type: 'system')
+sdbusplus_dep = dependency('sdbusplus', required: false)
 ipmid_dep = dependency('libipmid')
 
 # Project Arguments

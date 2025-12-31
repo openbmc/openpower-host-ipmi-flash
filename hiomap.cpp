@@ -240,8 +240,6 @@ constexpr auto HIOMAPD_OBJECT = "/xyz/openbmc_project/Hiomapd";
 constexpr auto HIOMAPD_IFACE = "xyz.openbmc_project.Hiomapd.Protocol";
 constexpr auto HIOMAPD_IFACE_V2 = "xyz.openbmc_project.Hiomapd.Protocol.V2";
 
-constexpr auto DBUS_IFACE_PROPERTIES = "org.freedesktop.DBus.Properties";
-
 /* XXX: ipmid is currently single-threaded, pumping dbus events in sequence
  * via the main event loop. Thus the code is not forced to be re-entrant. We
  * also know that the callback and DBus event handling will not be running

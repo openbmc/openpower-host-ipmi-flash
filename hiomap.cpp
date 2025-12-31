@@ -845,7 +845,7 @@ static void register_openpower_hiomap_commands()
      * Can't use temporaries here because that causes SEGFAULTs due to slot
      * destruction (!?), so enjoy the weird wrapping.
      */
-    ctx->properties = new bus::match_t(std::move(hiomap_match_properties(ctx)));
+    ctx->properties = new bus::match_t(hiomap_match_properties(ctx));
 
     std::function<SignalResponse(int)> shutdownHandler =
         [ctx]([[maybe_unused]] int signalNumber) {

@@ -256,7 +256,7 @@ struct hiomap
     bus_t* bus;
 
     /* Signals */
-    bus::match_t* properties;
+    match* properties;
 
     /* Protocol state */
     std::map<std::string, int> event_lookup;
@@ -418,14 +418,14 @@ static int hiomap_protocol_reset(struct hiomap* ctx)
     return 0;
 }
 
-static bus::match_t hiomap_match_properties(struct hiomap* ctx)
+static match hiomap_match_properties(struct hiomap* ctx)
 {
     auto properties =
         bus::match::rules::propertiesChanged(HIOMAPD_OBJECT, HIOMAPD_IFACE_V2);
 
-    bus::match_t match(
-        *ctx->bus, properties,
-        std::bind(hiomap_handle_property_update, ctx, std::placeholders::_1));
+    match match(*ctx->bus, properties,
+                std::bind(hiomap_handle_property_update, ctx,
+                          std::placeholders::_1));
 
     return match;
 }
@@ -843,7 +843,7 @@ static void register_openpower_hiomap_commands()
      * Can't use temporaries here because that causes SEGFAULTs due to slot
      * destruction (!?), so enjoy the weird wrapping.
      */
-    ctx->properties = new bus::match_t(hiomap_match_properties(ctx));
+    ctx->properties = new match(hiomap_match_properties(ctx));
 
     std::function<SignalResponse(int)> shutdownHandler =
         [ctx]([[maybe_unused]] int signalNumber) {

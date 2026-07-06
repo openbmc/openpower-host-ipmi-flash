@@ -32,7 +32,7 @@
 # data within them will be kept sorted.
 
 owners:
-- anoo@us.ibm.com
+- geissonator@yahoo.com
 
 reviewers:
 - deepak.kodihalli.83@gmail.com
@@ -40,9 +40,9 @@ reviewers:
 matchers:
 
 openbmc:
-- name: Adriana Kobylak
-  email: anoo@us.ibm.com
-  discord: anoo
+- name: Andrew Geissler
+  email: geissonator@yahoo.com
+  discord: geissonator
 - name: Deepak Kodihalli
   email: deepak.kodihalli.83@gmail.com
   discord: dkodihal
